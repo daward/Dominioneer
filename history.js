@@ -17,7 +17,7 @@ History.prototype.predict = function(game)
 	}
 	
 	return retVal;
-}
+};
 
 History.prototype.dataset = function()
 {
@@ -25,16 +25,16 @@ History.prototype.dataset = function()
 	for(var i = 0; i < this.playedGames.length; i++)
 	{
 		var game = this.playedGames[i];
-		dataSet.push([game.game.selectionVector(), game.rating])
+		dataSet.push([game.game.selectionVector(), game.rating]);
 	}
 	
 	return dataSet;
-}
+};
 
 History.prototype.train = function()
 {	
-	this.svm.train(this.dataset())
-}
+	this.svm.train(this.dataset());
+};
 
 History.prototype.play = function(game, rating)
 {	
@@ -52,6 +52,6 @@ History.prototype.play = function(game, rating)
 	}	
 	
 	this.playedGames.push({game : game, rating : rating});
-}
+};
 
 module.exports = History;

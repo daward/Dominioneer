@@ -33,6 +33,6 @@ Game.prototype.selectionVector = function()
 	}
 	
 	return selectionVector;
-}
+};
 
 module.exports = Game;

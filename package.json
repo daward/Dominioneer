@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/daward/Dominioneer/issues"
   },
-  "homepage": "https://github.com/daward/Dominioneer#readme"
+  "homepage": "https://github.com/daward/Dominioneer#readme",
+  "dependencies": {
+    "node-svm": "^2.1.5"
+  }
 }
