@@ -1,0 +1,24 @@
+{
+  "name": "dominioneer",
+  "version": "1.0.0",
+  "description": "A dominion card selector that learns what cards you prefer",
+  "main": "deck.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daward/Dominioneer.git"
+  },
+  "keywords": [
+    "dominion",
+    "card",
+    "deck"
+  ],
+  "author": "Dana Ward",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daward/Dominioneer/issues"
+  },
+  "homepage": "https://github.com/daward/Dominioneer#readme"
+}
