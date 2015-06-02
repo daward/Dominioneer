@@ -26,7 +26,7 @@ var cards = [
 {name : 'Mine', 		type : 'Action'},
 {name : 'Witch', 		type : 'Attack'},
 {name : 'Adventurer', 	type : 'Action'}
-]
+];
 
 var Deck = function () 
 {
@@ -41,7 +41,7 @@ Deck.prototype.createGame = function (arrayFn)
 	}
 	
 	return new Game(selectVector(new Array(cards.length), 0));
-}
+};
 
 Deck.prototype.startArray = function(requiredCards)
 {
@@ -54,7 +54,7 @@ Deck.prototype.startArray = function(requiredCards)
 	}
 	
 	return { vector : vector, selected : numSelected};
-}
+};
 
 Deck.prototype.createBestGame = function(arrayFn, trialSize, histories)
 {
@@ -75,7 +75,7 @@ Deck.prototype.createBestGame = function(arrayFn, trialSize, histories)
 	}
 	
 	return bestGame;	
-}
+};
 
 Deck.prototype.getCardIndex = function(cardName)
 {
@@ -86,7 +86,7 @@ Deck.prototype.getCardIndex = function(cardName)
 			return i;
 		}
 	}
-}
+};
 
 Deck.prototype.predict = function(game, histories)
 {
@@ -98,7 +98,7 @@ Deck.prototype.predict = function(game, histories)
 		len++;
 	}
 	return total / len;
-}
+};
 
 Deck.prototype.cards = cards;
 
@@ -119,4 +119,4 @@ function selectVector(vector, numSelected)
 	}
 	
 	return vector;
-}
+};
