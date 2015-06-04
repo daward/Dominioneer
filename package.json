@@ -2,7 +2,7 @@
   "name": "dominioneer",
   "version": "1.0.0",
   "description": "A dominion card selector that learns what cards you prefer",
-  "main": "deck.js",
+  "main": "dominioneer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

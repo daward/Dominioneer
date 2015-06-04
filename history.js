@@ -1,4 +1,5 @@
 var Svm = require('node-svm');
+var Game = require('./game.js');
 
 var History = function () 
 {
@@ -6,10 +7,10 @@ var History = function ()
 	this.svm = new Svm.CSVC({probability : true});
 };
 
-History.prototype.predict = function(game)
+History.prototype.predict = function(gameHash)
 {
 	var retVal = 0;
-	var prediction = this.svm.predictProbabilitiesSync(game.selectionVector());
+	var prediction = this.svm.predictProbabilitiesSync(Game.decodeVector(gameHash));
 	for(var prop in prediction)
 	{
 		var value = parseInt(prop);
@@ -17,26 +18,26 @@ History.prototype.predict = function(game)
 	}
 	
 	return retVal;
-}
+};
 
 History.prototype.dataset = function()
 {
 	var dataSet = [];
 	for(var i = 0; i < this.playedGames.length; i++)
 	{
-		var game = this.playedGames[i];
-		dataSet.push([game.game.selectionVector(), game.rating])
+		var playedGame = this.playedGames[i];
+		dataSet.push([Game.decodeVector(playedGame.game), playedGame.rating]);
 	}
 	
 	return dataSet;
-}
+};
 
 History.prototype.train = function()
 {	
-	this.svm.train(this.dataset())
-}
+	this.svm.train(this.dataset());
+};
 
-History.prototype.play = function(game, rating)
+History.prototype.play = function(gameHashCode, rating)
 {	
 	if(rating == null)
 	{
@@ -51,7 +52,7 @@ History.prototype.play = function(game, rating)
 		throw "Invalid rating: " + rating;
 	}	
 	
-	this.playedGames.push({game : game, rating : rating});
-}
+	this.playedGames.push({game : gameHashCode, rating : rating});
+};
 
 module.exports = History;
