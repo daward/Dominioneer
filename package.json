@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/daward/Dominioneer#readme",
   "dependencies": {
-    "express": "^4.12.4",
     "node-svm": "^2.1.5"
   }
 }
