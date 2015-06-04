@@ -34,26 +34,32 @@ var Deck = function ()
 
 Deck.prototype.createGame = function (arrayFn) 
 {
-	if(arrayFn)
+	var startArrayFn = arrayFn || function() { return [] }
+	var selected = selectVector(startArrayFn())
+	return new Game.Game(Game.encode(selected));
+}
+
+Deck.prototype.activeCards = function(gameHash) 
+{
+	var cardNums = Game.decode(gameHash);
+	var retVal = [];
+	for(var i in cardNums)
 	{
-		var arrDescriptor = arrayFn();
-		return new Game(selectVector(arrDescriptor.vector, arrDescriptor.selected));
+		retVal.push(cards[cardNums[i]])
 	}
 	
-	return new Game(selectVector(new Array(cards.length), 0));
-}
+	return retVal;
+};
 
 Deck.prototype.startArray = function(requiredCards)
 {
-	var vector = new Array(cards.length);
-	var numSelected = 0;
+	var vector = []
 	for(var i = 0; i < requiredCards.length; i++)
 	{
-		vector[this.getCardIndex(requiredCards[i])] = true;
-		numSelected++
+		vector.push(this.getCardIndex(requiredCards[i]));
 	}
 	
-	return { vector : vector, selected : numSelected};
+	return vector;
 }
 
 Deck.prototype.createBestGame = function(arrayFn, trialSize, histories)
@@ -104,19 +110,28 @@ Deck.prototype.cards = cards;
 
 module.exports = Deck;
 
-function selectVector(vector, numSelected)
-{
-	while(numSelected < 10)
+function selectVector(vector)
+{	
+	while(vector.length < 10)
 	{
-		var index = Math.floor(Math.random() * vector.length)
+		var index = Math.floor(Math.random() * cards.length)
 		var found=false;
 	  
-		if(!vector[index])
+		for(var i in vector)
 		{
-			vector[index] = true;
-			numSelected++;
+			if(vector[i] == index)
+			{
+				found = true;
+				break;
+			}
+		}		
+		
+		if(!found)
+		{
+			vector.push(index)
 		}
 	}
 	
-	return vector;
+	//a sorted game removes a lot of unnecessary permutations
+	return vector.sort(function(a, b) { return a - b});
 }
