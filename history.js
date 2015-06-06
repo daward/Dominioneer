@@ -5,10 +5,17 @@ var History = function ()
 {
 	this.playedGames = [];
 	this.svm = new Svm.CSVC({probability : true});
+	this.trained = false;
 };
 
 History.prototype.predict = function(gameHash)
 {
+	if(this.playedGames.length > 4 && !this.trained)
+	{
+		this.train();
+		this.trained = true
+	}
+	
 	var retVal = 0;
 	var prediction = this.svm.predictProbabilitiesSync(Game.decodeVector(gameHash));
 	for(var prop in prediction)
