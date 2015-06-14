@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/daward/Dominioneer#readme",
   "dependencies": {
+    "aws-sdk": "^2.1.33",
     "node-svm": "^2.1.5"
   }
 }

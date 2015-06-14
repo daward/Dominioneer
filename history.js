@@ -1,11 +1,13 @@
 var Svm = require('node-svm');
 var Game = require('./game.js');
 
-var History = function () 
+var History = function (name, playedGames, recordFn) 
 {
-	this.playedGames = [];
+	this.playedGames = playedGames;
 	this.svm = new Svm.CSVC({probability : true});
 	this.trained = false;
+	this.name = name;
+	this.recordFn = recordFn;
 };
 
 History.prototype.predict = function(gameHash)
@@ -60,6 +62,7 @@ History.prototype.play = function(gameHashCode, rating)
 	}	
 	
 	this.playedGames.push({game : gameHashCode, rating : rating});
+	this.recordFn(this.name, gameHashCode, rating);
 };
 
 module.exports = History;
