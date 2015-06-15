@@ -3,7 +3,7 @@ var AWS = require('aws-sdk');
 
 var builder = new Dominioneer.GameBuilder();
 var histories = new Dominioneer.HistoryBuilder();
-// histories.setupDb();
+histories.setupDb();
 
 var cellarGames = 
 [

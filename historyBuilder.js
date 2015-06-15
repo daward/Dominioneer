@@ -6,6 +6,7 @@ var HistoryBuilder = function ()
 	AWS.config.region = 'us-west-1';
 	this.dyn = new AWS.DynamoDB({ endpoint: new AWS.Endpoint('http://localhost:8000') });
 	this.histories = [];
+	this.tableName = "DominionPlayerHistory"
 };
 
 HistoryBuilder.prototype.get = function(name, callback)
@@ -40,17 +41,35 @@ HistoryBuilder.prototype.get = function(name, callback)
 
 HistoryBuilder.prototype.setupDb = function()
 {	
-	var pDrop = {
-		TableName: 'DominionPlayerHistory',
-	};
-	this.dyn.deleteTable(pDrop, function(err, data) {
+	var me = this;
+	this.dyn.listTables({}, function(err, data) {
 		if (err) console.log(err); // an error occurred
-		else console.log(data); // successful response
+		else 
+		{
+			var found = false;
+			for(var name in data.TableNames)
+			{
+				if(data.TableNames[name] == me.tableName)
+				{
+					found = true;
+					break;
+				}
+			}
+			
+			if(!found)
+			{
+				console.log("Creating the tables")
+				me.createTable();
+			}
+		}
 	});
-	
+}
+
+HistoryBuilder.prototype.createTable = function()
+{
 	var params = 
 	{
-		TableName: 'DominionPlayerHistory',
+		TableName: this.tableName,
 		KeySchema: [ // The type of of schema.  Must start with a HASH type, with an optional second RANGE.
 			{ // Required HASH type attribute
 				AttributeName: 'userId',
@@ -94,31 +113,31 @@ HistoryBuilder.prototype.record = function(name, game, rating)
 			gameId: {S: game },
 			rating: {N: rating.toString() }
 		},
-		TableName: "DominionPlayerHistory"
+		TableName: this.tableName
 	}
 	
 	this.dyn.putItem(params, function(err, data) {
 		if (err) console.log(err, err.stack); // an error occurred
 		else     console.log(data);           // successful response
-	});
+	});	
 }
 
 HistoryBuilder.prototype.loadHistory = function(name, callback)
 {
 	var params = {
-		TableName: 'DominionPlayerHistory',
-		KeyConditionExpression: "userId = :userId",
-		ExpressionAttributeValues:  
-		{
-			"userId" : {S: 'Dana'}
+		TableName: this.tableName,
+		KeyConditions: {
+		  userId: {
+			ComparisonOperator: 'EQ',
+			AttributeValueList: [{S: name}]
+		  }
 		}
-	};
+	};	
 	
 	this.dyn.query(params, function(err, data) {
 		if (err) console.log(err); // an error occurred
 		else 
 		{
-			console.log("GOOOOOOD Stuff");
 			var retVal = []
 			for(var i in data.Items)
 			{
