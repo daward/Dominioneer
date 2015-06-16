@@ -1,10 +1,9 @@
 var AWS = require('aws-sdk');
 var History = require('./history.js')
 
-var HistoryBuilder = function () 
+var HistoryBuilder = function (database) 
 {
-	AWS.config.region = 'us-west-1';
-	this.dyn = new AWS.DynamoDB({ endpoint: new AWS.Endpoint('http://localhost:8000') });
+	this.database = database;
 	this.histories = [];
 	this.tableName = "DominionPlayerHistory"
 };
@@ -42,7 +41,7 @@ HistoryBuilder.prototype.get = function(name, callback)
 HistoryBuilder.prototype.setupDb = function()
 {	
 	var me = this;
-	this.dyn.listTables({}, function(err, data) {
+	this.database.listTables({}, function(err, data) {
 		if (err) console.log(err); // an error occurred
 		else 
 		{
@@ -98,7 +97,7 @@ HistoryBuilder.prototype.createTable = function()
 		}
 	};
 	
-	this.dyn.createTable(params, function(err, data) {
+	this.database.createTable(params, function(err, data) {
 		if (err) console.log(err); // an error occurred
 		else console.log(data); // successful response
 
@@ -116,7 +115,7 @@ HistoryBuilder.prototype.record = function(name, game, rating)
 		TableName: this.tableName
 	}
 	
-	this.dyn.putItem(params, function(err, data) {
+	this.database.putItem(params, function(err, data) {
 		if (err) console.log(err, err.stack); // an error occurred
 		else     console.log(data);           // successful response
 	});	
@@ -134,7 +133,7 @@ HistoryBuilder.prototype.loadHistory = function(name, callback)
 		}
 	};	
 	
-	this.dyn.query(params, function(err, data) {
+	this.database.query(params, function(err, data) {
 		if (err) console.log(err); // an error occurred
 		else 
 		{

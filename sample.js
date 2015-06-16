@@ -1,8 +1,10 @@
 var Dominioneer = require('./dominioneer.js');
 var AWS = require('aws-sdk');
-
+AWS.config.region = 'us-west-1';
+var database = new AWS.DynamoDB({ endpoint: new AWS.Endpoint('http://localhost:8000') });
+	
 var builder = new Dominioneer.GameBuilder();
-var histories = new Dominioneer.HistoryBuilder();
+var histories = new Dominioneer.HistoryBuilder(database);
 histories.setupDb();
 
 var cellarGames = 
