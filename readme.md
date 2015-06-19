@@ -1,7 +1,5 @@
 # Domioneer
 Dominioneer suggests dominion games based on users ratings of previous games. 
-## Version
-1.0.0
 
 ## Examples
 
