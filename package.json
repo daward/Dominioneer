@@ -4,11 +4,11 @@
   "description": "A dominion card selector that learns what cards you prefer",
   "main": "dominioneer.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/all.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/daward/Dominioneer.git"
+    "url": "https://github.com/daward/Dominioneer.git"
   },
   "keywords": [
     "dominion",
@@ -21,6 +21,11 @@
     "url": "https://github.com/daward/Dominioneer/issues"
   },
   "homepage": "https://github.com/daward/Dominioneer#readme",
+  "devDependencies": {
+    "nodeunit": "^0.9.1",
+    "test": "^0.6.0",
+    "wait.for": "^0.6.6"
+  },
   "dependencies": {
     "node-svm": "^2.1.5"
   }

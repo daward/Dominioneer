@@ -1,3 +1,7 @@
+/*jslint node: true */
+/*jslint plusplus: true */
+'use strict';
+
 var GameBuilder = require('./gamebuilder.js');
 var HistoryBuilder = require('./historyBuilder.js');
 var Deck = require('./deck.js');

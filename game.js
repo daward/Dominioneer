@@ -1,42 +1,43 @@
-var Deck = require('./deck.js')
+/*jslint node: true */
+/*jslint plusplus: true */
+'use strict';
 
-module.exports.encode = function(selectedCards)
-{
-	var retVal = '';
-	for(var index in selectedCards)
-	{
-		retVal = retVal + ("00" + selectedCards[index].toString(16)).slice(-2)
+var Deck = require('./deck.js');
+
+module.exports.encode = function (selectedCards) {
+	var retVal = '', index;
+	for (index = 0; index < selectedCards.length; index++) {
+		retVal = retVal + ("00" + selectedCards[index].toString(16)).slice(-2);
 	}
-	
-	return retVal;
-}
 
-module.exports.decodeVector = function(hashCode)
-{
-	var selectedCards = module.exports.decode(hashCode);
-	var deck = new Deck();
-	var retVal = new Array(deck.cards.length);
-	for(var i = 0; i < retVal.length; i++)
-	{
+	return retVal;
+};
+
+module.exports.decodeVector = function (hashCode) {
+	var selectedCards = module.exports.decode(hashCode),
+		deck = new Deck(),
+		retVal = [],
+		i;
+
+	for (i = 0; i < deck.cards.length; i++) {
 		retVal[i] = 0;
 	}
-	
-	for(var i in selectedCards)
-	{
+
+	for (i = 0; i < selectedCards.length; i++) {
 		retVal[selectedCards[i]] = 1;
 	}
-	
-	return retVal;
-}
 
-module.exports.decode = function(hashCode)
-{
-	var retVal = []
-	hex = hashCode.match(/.{1,2}/g)
-	for(var index in hex)
-	{
-		retVal.push(parseInt(hex[index], 16))
-	}
-	
 	return retVal;
-}
+};
+
+module.exports.decode = function (hashCode) {
+	var retVal = [],
+		hex = hashCode.match(/[0-9a-fA-F]{1,2}/g),
+		index;
+
+	for (index = 0; index < hex.length; index++) {
+		retVal.push(parseInt(hex[index], 16));
+	}
+
+	return retVal;
+};

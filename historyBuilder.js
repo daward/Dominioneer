@@ -1,153 +1,150 @@
-var AWS = require('aws-sdk');
-var History = require('./history.js')
+/*jslint node: true */
+/*jslint plusplus: true */
+'use strict';
 
-var HistoryBuilder = function (database) 
-{
+var History = require('./history.js');
+
+var HistoryBuilder = function (database) {
 	this.database = database;
 	this.histories = [];
-	this.tableName = "DominionPlayerHistory"
+	this.tableName = "DominionPlayerHistory";
 };
 
-HistoryBuilder.prototype.get = function(name, callback)
-{
-	var retVal = this.histories[name];
-	
+HistoryBuilder.prototype.get = function (name, callback) {
+	var retVal = this.histories[name], me = this;
+
 	// we already know about this history, so we can just send it back
-	if(retVal)
-	{
-		callback(history);				
-	}
-	else
-	{
-		var me = this;
-		this.loadHistory(name, function(data)
-		{
+	if (retVal) {
+		callback(retVal);
+	} else {
+		this.loadHistory(name, function (data) {
 			var retVal = new History(
-				name,  
+				name,
 				data,
-				function(name, game, rating)
-				{
-					me.record(name, game, rating)
-				});			
-			
+				function (name, game, rating) {
+					me.record(name, game, rating);
+				}
+			);
+
 			me.histories[name] = retVal;
-			
+
 			// once loaded it can be sent back
 			callback(retVal);
 		});
-	}	
-}
+	}
+};
 
-HistoryBuilder.prototype.setupDb = function()
-{	
+HistoryBuilder.prototype.setupDb = function () {
 	var me = this;
-	this.database.listTables({}, function(err, data) {
-		if (err) console.log(err); // an error occurred
-		else 
-		{
-			var found = false;
-			for(var name in data.TableNames)
-			{
-				if(data.TableNames[name] == me.tableName)
-				{
+	if (!this.database) { throw "No database provided to setup"; }
+
+	this.database.listTables({}, function (err, data) {
+		var tableName, found = false;
+		if (err) {
+			console.log(err);
+		} else {
+			for (tableName in data.TableNames) {
+				if (data.TableNames[tableName] === me.tableName) {
 					found = true;
 					break;
 				}
 			}
-			
-			if(!found)
-			{
-				console.log("Creating the tables")
-				me.createTable();
+
+			if (!found) {
+				console.log("Creating the tables");
+				me.createGameStorage();
 			}
 		}
 	});
-}
+};
 
-HistoryBuilder.prototype.createTable = function()
-{
-	var params = 
-	{
+HistoryBuilder.prototype.createGameStorage = function () {
+	var params = {
 		TableName: this.tableName,
 		KeySchema: [ // The type of of schema.  Must start with a HASH type, with an optional second RANGE.
 			{ // Required HASH type attribute
 				AttributeName: 'userId',
-				KeyType: 'HASH',
+				KeyType: 'HASH'
 			},
 			{ // Required HASH type attribute
 				AttributeName: 'gameId',
-				KeyType: 'RANGE',
-			},
+				KeyType: 'RANGE'
+			}
 		],
 		AttributeDefinitions: [ // The names and types of all primary and index key attributes only
 			{
 				AttributeName: 'userId',
-				AttributeType: 'S', 
+				AttributeType: 'S'
 			},
 			{
 				AttributeName: 'gameId',
-				AttributeType: 'S', 
-			},
-			
+				AttributeType: 'S'
+			}
+
 			// ... more attributes ...
 		],
 		ProvisionedThroughput: { // required provisioned throughput for the table
-			ReadCapacityUnits: 1, 
-			WriteCapacityUnits: 1, 
+			ReadCapacityUnits: 1,
+			WriteCapacityUnits: 1
 		}
 	};
-	
-	this.database.createTable(params, function(err, data) {
-		if (err) console.log(err); // an error occurred
-		else console.log(data); // successful response
 
+	this.database.createTable(params, function (err, data) {
+		if (err) {
+			console.log(err);
+		} else {
+			console.log(data);
+		}
 	});
-}
+};
 
-HistoryBuilder.prototype.record = function(name, game, rating)
-{
-	var params = {
-		Item: {
-			userId: {S: name },
-			gameId: {S: game },
-			rating: {N: rating.toString() }
-		},
-		TableName: this.tableName
+HistoryBuilder.prototype.record = function (name, game, rating) {
+	// if no database was provided, then we don't need to do anything
+	if (this.database) {
+		var params = {
+			Item: {
+				userId: {S: name },
+				gameId: {S: game },
+				rating: {N: rating.toString() }
+			},
+			TableName: this.tableName
+		};
+
+		this.database.putItem(params, function (err, data) {
+			if (err) {
+				console.log(err, err.stack);
+			} else {
+				console.log(data);
+			}
+		});
 	}
-	
-	this.database.putItem(params, function(err, data) {
-		if (err) console.log(err, err.stack); // an error occurred
-		else     console.log(data);           // successful response
-	});	
-}
+};
 
-HistoryBuilder.prototype.loadHistory = function(name, callback)
-{
+HistoryBuilder.prototype.loadHistory = function (name, callback) {
+	
+	if (!this.database) { callback([]); return; }
+
 	var params = {
 		TableName: this.tableName,
 		KeyConditions: {
-		  userId: {
-			ComparisonOperator: 'EQ',
-			AttributeValueList: [{S: name}]
-		  }
+			userId: {
+				ComparisonOperator: 'EQ',
+				AttributeValueList: [{S: name}]
+			}
 		}
-	};	
-	
-	this.database.query(params, function(err, data) {
-		if (err) console.log(err); // an error occurred
-		else 
-		{
-			var retVal = []
-			for(var i in data.Items)
-			{
-				var item = data.Items[i];
-				console.log('----------');
-				console.log(item);
-				retVal.push({game : item.gameId, rating: item.rating})
+	};
+
+	this.database.query(params, function (err, data) {
+		var i, retVal = [];
+		if (err) {
+			console.log(err);
+		} else {
+			for (i = 0; i < data.Items.length; i++) {
+				retVal.push({game : data.Items[i].gameId, rating: data.Items[i].rating});
 			}
 			callback(retVal);
 		}
 	});
-}
+};
 
 module.exports = HistoryBuilder;
