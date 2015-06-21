@@ -19,7 +19,7 @@ module.exports.decodeVector = function (hashCode) {
 		retVal = [],
 		i;
 
-	for (i = 0; i < deck.cards.length; i++) {
+	for (i = 0; i < deck.allCards.length; i++) {
 		retVal[i] = 0;
 	}
 

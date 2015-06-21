@@ -19,7 +19,7 @@ History.prototype.predict = function (gameHash, callback) {
 	
 	// there's just not enough information to make a useful prediction
 	if (this.playedGames.length < 5) {
-		callback(.5);
+		callback(0);
 	} else if (!this.trained) {
 		this.train(function () {
 			me.trained = true;
@@ -65,7 +65,7 @@ History.prototype.play = function (gameHashCode, rating) {
 		throw "Must provide rating";
 	}
 
-	if (rating === 1 || rating === 0) {
+	if (rating === 1 || rating === 0 || rating === -1) {
 		this.rating = rating;
 	} else {
 		throw "Invalid rating: " + rating;

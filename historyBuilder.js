@@ -10,6 +10,16 @@ var HistoryBuilder = function (database) {
 	this.tableName = "DominionPlayerHistory";
 };
 
+HistoryBuilder.prototype.getAll = function (names, callback) {
+	var retVal = [], i = 0;
+	
+	for(i = 0; i < names.length; i++) {
+		this.get(names[i], function (history) { retVal.push(history); });
+	}
+	
+	return callback(retVal);
+}
+
 HistoryBuilder.prototype.get = function (name, callback) {
 	var retVal = this.histories[name], me = this;
 

@@ -7,7 +7,7 @@ var Game = require('./game.js');
 
 function selectVector(vector, deck) {
 	while (vector.length < 10) {
-		var index = Math.floor(Math.random() * deck.cards.length),
+		var index = Math.floor(Math.random() * deck.getAvailableCards().length),
 			found = false,
 			i;
 
@@ -28,56 +28,59 @@ function selectVector(vector, deck) {
 }
 
 var GameBuilder = function () {
-	this.deck = new Deck();
+
 };
 
-GameBuilder.prototype.createGame = function (arrayFn) {
-	var startArrayFn = arrayFn || function () { return []; },
-		selected = selectVector(startArrayFn(), this.deck);
-
-	return Game.encode(selected);
-};
-
-GameBuilder.prototype.requiredCards = function (requiredCards) {
+GameBuilder.prototype.createGame = function (deck, requiredCards) {
 	var vector = [], i;
-	for (i = 0; i < requiredCards.length; i++) {
-		vector.push(this.deck.getCardIndex(requiredCards[i]));
-	}
-
-	return vector;
-};
-
-GameBuilder.prototype.createBestGame = function (arrayFn, trialSize, histories) {
-	var bestGame = null,
-		bestRating = -1,
-		i,
-		game,
-		rating;
-
-	for (i = 0; i < trialSize; i++) {
-		game = this.createGame(arrayFn);
-		rating = this.predict(game, histories);
-
-		if (rating > bestRating) {
-			bestGame = game;
-			bestRating = rating;
+	
+	if(requiredCards) {
+		for (i = 0; i < requiredCards.length; i++) {
+			vector.push(deck.getCardIndex(requiredCards[i]));
 		}
 	}
 
-	return bestGame;
+	return Game.encode(selectVector(vector, deck));
 };
 
-GameBuilder.prototype.predict = function (game, histories) {
-	var total = 0,
-		len = 0,
-		i;
+GameBuilder.prototype.createBestGame = function (deck, requiredCards, trialSize, histories, callback) {
+	var candidateGames = [],
+		i,
+		j,
+		finished = 0,
+		predict = function (candidate, history) {
+			var i = 0;
+			history.predict(candidate.game, function (rating) {
+				finished++;
+				candidate.ratingTotal += rating;
+				
+				if(finished === histories.length * candidateGames.length) {
+					candidateGames.sort(function (a, b) {
+						return b.ratingTotal - a.ratingTotal;
+					});
+					
+					for(i = 0; i < candidateGames.length; i++) {
+						candidateGames[i].ratingTotal = candidateGames[i].ratingTotal / histories.length;
+					}					
+					callback(candidateGames[0]);
+				}
+			});
+		};
 
-	for (i = 0; i < histories.length; i++) {
-		total = total + histories[i].predict(game);
-		len++;
+	// build a candidate set of games
+	for (i = 0; i < trialSize; i++) {
+		candidateGames.push({
+			game : this.createGame(deck, requiredCards),
+			ratingTotal : 0
+		});
 	}
-
-	return total / len;
+	
+	// spin off a bunch of asynchronous predictions that eventually call the callback
+	for(i = 0; i < candidateGames.length; i++) {
+		for (j = 0; j < histories.length; j++) {
+			predict(candidateGames[i], histories[j]);
+		}
+	}
 };
 
 module.exports = GameBuilder;

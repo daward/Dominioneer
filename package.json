@@ -4,7 +4,7 @@
   "description": "A dominion card selector that learns what cards you prefer",
   "main": "dominioneer.js",
   "scripts": {
-    "test": "node test/all.js"
+    "test": "node test/runner.js"
   },
   "repository": {
     "type": "git",

@@ -9,5 +9,5 @@ var Game = require('./game.js');
 
 module.exports.GameBuilder = GameBuilder;
 module.exports.HistoryBuilder = HistoryBuilder;
-module.exports.deck = new Deck();
+module.exports.Deck = Deck;
 module.exports.Game = Game;
