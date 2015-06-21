@@ -3,44 +3,26 @@
 'use strict';
 
 var Deck = require('./deck.js');
-var Game = require('./game.js');
+var CardSelector = require('./cardSelector.js');
 
-function selectVector(vector, deck) {
-	while (vector.length < 10) {
-		var index = Math.floor(Math.random() * deck.getAvailableCards().length),
-			found = false,
-			i;
-
-		for (i = 0; i < vector.length; i++) {
-			if (vector[i] === index) {
-				found = true;
-				break;
-			}
-		}
-
-		if (!found) {
-			vector.push(index);
-		}
-	}
-
-	//a sorted game removes a lot of unnecessary permutations
-	return vector.sort(function (a, b) { return a - b; });
-}
-
-var GameBuilder = function () {
-
-};
+var GameBuilder = function () {};
 
 GameBuilder.prototype.createGame = function (deck, requiredCards) {
-	var vector = [], i;
+	var vector = [], i, hash = {}, cardSelector = new CardSelector(deck);
 	
 	if(requiredCards) {
+		
+		// ensure the supplied cards are unique as the index is fetched
 		for (i = 0; i < requiredCards.length; i++) {
-			vector.push(deck.getCardIndex(requiredCards[i]));
+			var card = requiredCards[i];
+			if(!hash[card])	{
+				hash[card] = true;
+				cardSelector.addCardByName(requiredCards[i])
+			}
 		}
 	}
 
-	return Game.encode(selectVector(vector, deck));
+	return cardSelector.getId();
 };
 
 GameBuilder.prototype.createBestGame = function (deck, requiredCards, trialSize, histories, callback) {

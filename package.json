@@ -22,9 +22,7 @@
   },
   "homepage": "https://github.com/daward/Dominioneer#readme",
   "devDependencies": {
-    "nodeunit": "^0.9.1",
-    "test": "^0.6.0",
-    "wait.for": "^0.6.6"
+    "nodeunit": "^0.9.1"
   },
   "dependencies": {
     "node-svm": "^2.1.5"

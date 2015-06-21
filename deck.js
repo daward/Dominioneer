@@ -31,11 +31,10 @@ Deck.prototype.getTypeWeights = function() {
 		cardType,
 		availableCards = this.getAvailableCards();
 	
-	for(i = 0; i < availableCards.length; i++)
-	{
+	for(i = 0; i < availableCards.length; i++) {
 		cardType = availableCards[i].type;
-		for(j = 0; j < cardType.length; j++)
-		{
+
+		for(j = 0; j < cardType.length; j++) {
 			if(!retVal[cardType[j]]) {
 				retVal[cardType[j]] = 1;
 			} else {
@@ -47,22 +46,40 @@ Deck.prototype.getTypeWeights = function() {
 	return retVal;
 }
 
-Deck.prototype.getAvailableCards = function()
-{	
-	if(!this.sets || this.sets.length == 0)
-	{
-		return this.allCards;
-	}
+Deck.prototype.getAvailableCardIndicies = function() {
+	var retVal = [];
 	
-	var i, j, retVal = [];
+	this.getActive(function (index) {
+		retVal.push(index)
+	});
+	
+	return retVal;	
+}
+
+Deck.prototype.getAvailableCards = function() {	
+	var retVal = [];
+	var me = this;
+	this.getActive(function (index) {
+		retVal.push(me.allCards[index])
+	});
+	
+	return retVal;
+}
+
+Deck.prototype.getActive = function(callback) {
+	var i, j;
+	
 	for(i = 0; i < this.allCards.length; i++) {
-		for(j = 0; j < this.sets.length; j++) {
-			if(this.allCards[i].set === this.sets[j]) {
-				retVal.push(this.allCards[i])
+		if(!this.sets || this.sets.length == 0) {
+			callback(i)
+		} else {
+			for(j = 0; j < this.sets.length; j++) {
+				if(this.allCards[i].set === this.sets[j]) {
+					callback(i)
+				}			
 			}
 		}
 	}
-	return retVal;
 }
 
 module.exports = Deck;

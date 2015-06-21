@@ -8,9 +8,7 @@ var Dominioneer = require('../dominioneer.js'),
 
 exports['test a game can be created'] = function (test) {
 
-	test.expect(1);
 	var game = builder.createGame(deck, null);
-
 	test.equal(10, Dominioneer.Game.decode(game).length, "length correct");
 	test.done();
 };
@@ -27,6 +25,21 @@ exports['test a game can be created with a specific card'] = function (test) {
 	}
 
 	test.equal(true, found, "found the expected card");
+	test.done();
+};
+
+exports['test cards do not repeat'] = function (test) {
+
+	var game = builder.createGame(deck, ['Witch', 'Witch']),
+		cards = deck.getCards(Dominioneer.Game.decode(game)),
+		found = 0,
+		i;
+
+	for (i = 0; i < cards.length; i++) {
+		if (cards[i].name === 'Witch') { found++; }
+	}
+
+	test.equal(1, found, "found the expected card");
 	test.done();
 };
 
@@ -49,7 +62,6 @@ exports['test game suggestions are effective'] = function (test) {
 	
 	histories.getAll(["Dana", "Tony"], function (historySet) {
 		builder.createBestGame(deck, null, 4, historySet, function(bestGame){
-			console.log(bestGame);	
 			test.ok(bestGame.game, "Makes sure a game was generated");
 			test.done();
 		})
