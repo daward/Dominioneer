@@ -43,6 +43,20 @@ exports['test cards do not repeat'] = function (test) {
 	test.done();
 };
 
+exports['game cannot be built with an unknown card'] = function(test) {
+	
+	try {
+		var game = builder.createGame(deck, ['Total Nonsense']);
+		test.ok(false, "Game was created, which should be impossible");
+	}
+	catch(err)
+	{
+		test.ok(true, "Game was successfully rejected");
+	}
+	
+	test.done();
+}
+
 exports['test game suggestions are effective'] = function (test) {
 
 	var histories = new Dominioneer.HistoryBuilder(null);

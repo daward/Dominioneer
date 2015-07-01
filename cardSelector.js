@@ -21,11 +21,15 @@ CardSelector.prototype.addRandomCard = function() {
 CardSelector.prototype.addCardByName = function(cardName) {
 	var index = this.deck.getCardIndex(cardName), i;
 	
+	if(index === undefined) {
+		throw "Unknown card " + cardName;
+	}
+	
 	for(i = 0; i < this.cardChoices.length; i++) {
 		if(this.cardChoices[i] === index) {
 			this.vector.push(this.cardChoices[i]);
 			this.cardChoices.splice(i, 1);
-			break;
+			return;
 		}
 	}
 }

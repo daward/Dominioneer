@@ -5,18 +5,20 @@ Dominioneer suggests dominion games based on users ratings of previous games.
 
 ### Creating a game
 ```javascript
-var Dominioneer = require('dominioneer');
-var builder = new Dominioneer.GameBuilder();
-var game = builder.createGame()
+var Dominioneer = require('dominioneer'),
+	deck = new Dominioneer.Deck(null),
+	builder = new Dominioneer.GameBuilder(),
+	game = builder.createGame(deck, null)
 ```
 ### Creating a game with a required set of cards
 ```javascript
-var Dominioneer = require('dominioneer');
-var builder = new Dominioneer.GameBuilder();
+var Dominioneer = require('dominioneer'),
+	builder = new Dominioneer.GameBuilder(),
+	deck = new Dominioneer.Deck(null),
 
 // Now provide a function that picks out required cards.
 // The builder has one for you already.
-var builder.createGame(function() { return builder.requiredCards(['Cellar', 'Witch'])}),
+var builder.createGame(deck, ['Cellar', 'Witch']),
 ```
 ### Rating a game
 Assuming you have created a game as, in above, its pretty easy!
@@ -52,5 +54,4 @@ npm install dominioneer
 * Improve predictions at lower sample sizes
 * Allow more variety of parameters to control random games
     * Expansion weight
-    * Card Cost
-    * Card type (attack, victory, treasure, action)
+	* Better prediction at small sample size
