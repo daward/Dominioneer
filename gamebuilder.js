@@ -59,7 +59,7 @@ GameBuilder.prototype.createBestGame = function (deck, requiredCards, trialSize,
 	
 	// spin off a bunch of asynchronous predictions that eventually call the callback
 	for(i = 0; i < candidateGames.length; i++) {
-		for (j = 0; j < histories.length; j++) {
+		for (j = 0; j < histories.length; j++) {			
 			predict(candidateGames[i], histories[j]);
 		}
 	}

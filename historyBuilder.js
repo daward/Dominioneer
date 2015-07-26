@@ -11,13 +11,21 @@ var HistoryBuilder = function (database) {
 };
 
 HistoryBuilder.prototype.getAll = function (names, callback) {
-	var retVal = [], i = 0;
+	var me = this;
 	
-	for(i = 0; i < names.length; i++) {
-		this.get(names[i], function (history) { retVal.push(history); });
-	}
+	var gameFetch = function(names, index, retVal, cont, callback) {
+		if(index < names.length) {
+			me.get(names[index], function(history) {
+				retVal.push(history);
+				index++;
+				cont(names, index, retVal, cont, callback);
+			});
+		} else {
+			callback(retVal);
+		}
+	};
 	
-	return callback(retVal);
+	gameFetch(names, 0, [], gameFetch, callback);
 }
 
 HistoryBuilder.prototype.get = function (name, callback) {
