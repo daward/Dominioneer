@@ -158,7 +158,7 @@ HistoryBuilder.prototype.loadHistory = function (name, callback) {
 			console.log(err);
 		} else {
 			for (i = 0; i < data.Items.length; i++) {
-				retVal.push({game : data.Items[i].gameId, rating: data.Items[i].rating.N});
+				retVal.push({game : data.Items[i].gameId.S, rating: data.Items[i].rating.N});
 			}
 			callback(retVal);
 		}
