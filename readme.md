@@ -30,7 +30,7 @@ var histories = new Dominioneer.HistoryBuilder(null);
 
 histories.get("Dana", function (history) {
     // 0 (dislike) or 1 (liked) is allowed
-	history.play(game, 1);
+	history.rate(game, 1);
 });
 ```
 ### Decide how much you will like a game

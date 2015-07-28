@@ -62,15 +62,15 @@ exports['test game suggestions are effective'] = function (test) {
 	var histories = new Dominioneer.HistoryBuilder(null);
 	histories.get("Dana", function (history) {
 		for(var i = 0; i < 30; i++) {
-			history.play(builder.createGame(deck, ['Cellar']), 1);
-			history.play(builder.createGame(deck, ['Witch']), -1);
+			history.rate(builder.createGame(deck, ['Cellar']), 1);
+			history.rate(builder.createGame(deck, ['Witch']), -1);
 		}
 	});
 	
 	histories.get("Tony", function (history) {
 		for(var i = 0; i < 30; i++) {
-			history.play(builder.createGame(deck, ['Chapel']), 1);
-			history.play(builder.createGame(deck, ['Witch']), 0);
+			history.rate(builder.createGame(deck, ['Chapel']), 1);
+			history.rate(builder.createGame(deck, ['Witch']), 0);
 		}
 	});
 	
