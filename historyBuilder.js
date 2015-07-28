@@ -129,7 +129,7 @@ HistoryBuilder.prototype.record = function (name, game, rating) {
 		};
 		
 		if(rating != null) {
-			params.Item.rating = {N: rating != null ? rating.toString() : null }
+			params.Item.rating = {N: rating.toString() }
 		}		
 
 		this.database.putItem(params, function (err, data) {
