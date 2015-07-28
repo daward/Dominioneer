@@ -124,7 +124,7 @@ HistoryBuilder.prototype.record = function (name, game, rating) {
 			Item: {
 				userId: {S: name },
 				gameId: {S: game },
-				rating: {N: rating ? rating.toString() : null }
+				rating: {N: rating != null ? rating.toString() : null }
 			},
 			TableName: this.tableName
 		};
