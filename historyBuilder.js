@@ -35,10 +35,11 @@ HistoryBuilder.prototype.get = function (name, callback) {
 	if (retVal) {
 		callback(retVal);
 	} else {
-		this.loadHistory(name, function (data) {
+		this.loadHistory(name, function (ratedGames, unratedGames) {
 			var retVal = new History(
 				name,
-				data,
+				ratedGames,
+				unratedGames,
 				function (name, game, rating) {
 					me.record(name, game, rating);
 				}
@@ -123,7 +124,7 @@ HistoryBuilder.prototype.record = function (name, game, rating) {
 			Item: {
 				userId: {S: name },
 				gameId: {S: game },
-				rating: {N: rating.toString() }
+				rating: {N: rating ? rating.toString() : null }
 			},
 			TableName: this.tableName
 		};
@@ -140,7 +141,7 @@ HistoryBuilder.prototype.record = function (name, game, rating) {
 
 HistoryBuilder.prototype.loadHistory = function (name, callback) {
 	
-	if (!this.database) { callback([]); return; }
+	if (!this.database) { callback([], []); return; }
 
 	var params = {
 		TableName: this.tableName,
@@ -153,14 +154,18 @@ HistoryBuilder.prototype.loadHistory = function (name, callback) {
 	};
 
 	this.database.query(params, function (err, data) {
-		var i, retVal = [];
+		var i, rated = [], unrated = [];
 		if (err) {
 			console.log(err);
 		} else {
 			for (i = 0; i < data.Items.length; i++) {
-				retVal.push({game : data.Items[i].gameId.S, rating: data.Items[i].rating.N});
+				if(data.Items[i].rating.N) {
+					rated.push({game : data.Items[i].gameId.S, rating: data.Items[i].rating.N});
+				} else {
+					unrated.push({game : data.Items[i].gameId.S});
+				}
 			}
-			callback(retVal);
+			callback(rated, unrated);
 		}
 	});
 };

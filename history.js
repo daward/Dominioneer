@@ -6,19 +6,20 @@
 var Svm = require('node-svm');
 var Game = require('./game.js');
 
-var History = function (name, playedGames, recordFn) {
-	this.playedGames = playedGames;
+var History = function (name, ratedGames, unratedGames, recordFn) {
+	this.ratedGames = ratedGames;
 	this.svm = new Svm.CSVC({probability : true});
 	this.trained = false;
 	this.name = name;
 	this.recordFn = recordFn;
+	this.unratedGames = unratedGames;
 };
 
 History.prototype.predict = function (gameHash, callback) {
 	var me = this;
 	
 	// there's just not enough information to make a useful prediction
-	if (this.playedGames.length < 5) {
+	if (this.ratedGames.length < 5) {
 		callback(0);
 	} else if (!this.trained) {
 		this.train(function () {
@@ -48,8 +49,8 @@ History.prototype.calculate = function (gameHash) {
 
 History.prototype.dataset = function () {
 	var dataSet = [], i, playedGame;
-	for (i = 0; i < this.playedGames.length; i++) {
-		playedGame = this.playedGames[i];
+	for (i = 0; i < this.ratedGames.length; i++) {
+		playedGame = this.ratedGames[i];
 		dataSet.push([Game.decodeVector(playedGame.game), playedGame.rating]);
 	}
 
@@ -60,7 +61,12 @@ History.prototype.train = function (callback) {
 	this.svm.train(this.dataset()).done(callback);
 };
 
-History.prototype.play = function (gameHashCode, rating) {
+History.prototype.play = function(gameHashCode) {
+	this.unratedGames.push({game : gameHashCode});
+	this.recordFn(this.name, gameHashCode, null);
+}
+
+History.prototype.rate = function (gameHashCode, rating) {
 	if (rating === null) {
 		throw "Must provide rating";
 	}
@@ -71,7 +77,7 @@ History.prototype.play = function (gameHashCode, rating) {
 		throw "Invalid rating: " + rating;
 	}
 
-	this.playedGames.push({game : gameHashCode, rating : rating});
+	this.ratedGames.push({game : gameHashCode, rating : rating});
 	this.recordFn(this.name, gameHashCode, rating);
 };
 
