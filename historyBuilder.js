@@ -123,11 +123,14 @@ HistoryBuilder.prototype.record = function (name, game, rating) {
 		var params = {
 			Item: {
 				userId: {S: name },
-				gameId: {S: game },
-				rating: {N: rating != null ? rating.toString() : null }
+				gameId: {S: game }
 			},
 			TableName: this.tableName
 		};
+		
+		if(rating != null) {
+			params.Item.rating = {N: rating != null ? rating.toString() : null }
+		}		
 
 		this.database.putItem(params, function (err, data) {
 			if (err) {
@@ -159,7 +162,7 @@ HistoryBuilder.prototype.loadHistory = function (name, callback) {
 			console.log(err);
 		} else {
 			for (i = 0; i < data.Items.length; i++) {
-				if(data.Items[i].rating.N) {
+				if(data.Items[i].rating) {
 					rated.push({game : data.Items[i].gameId.S, rating: data.Items[i].rating.N});
 				} else {
 					unrated.push({game : data.Items[i].gameId.S});
