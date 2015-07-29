@@ -162,10 +162,10 @@ HistoryBuilder.prototype.loadHistory = function (name, callback) {
 			console.log(err);
 		} else {
 			for (i = 0; i < data.Items.length; i++) {
-				if(data.Items[i].rating) {
-					rated.push({game : data.Items[i].gameId.S, rating: parseInt(data.Items[i].rating.N)});
-				} else {
+				if(data.Items[1].rating == undefined) {
 					unrated.push({game : data.Items[i].gameId.S});
+				} else {
+					rated.push({game : data.Items[i].gameId.S, rating: parseInt(data.Items[i].rating.N)});
 				}
 			}
 			callback(rated, unrated);
