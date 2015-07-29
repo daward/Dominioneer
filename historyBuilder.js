@@ -162,10 +162,11 @@ HistoryBuilder.prototype.loadHistory = function (name, callback) {
 			console.log(err);
 		} else {
 			for (i = 0; i < data.Items.length; i++) {
+				var gameId = data.Items[i].gameId.S.toLowerCase()
 				if(data.Items[i].rating == undefined) {
-					unrated.push({game : data.Items[i].gameId.S});
+					unrated.push({game : gameId});
 				} else {
-					rated.push({game : data.Items[i].gameId.S, rating: parseInt(data.Items[i].rating.N)});
+					rated.push({game : gameId, rating: parseInt(data.Items[i].rating.N)});
 				}
 			}
 			callback(rated, unrated);

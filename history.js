@@ -62,11 +62,13 @@ History.prototype.train = function (callback) {
 };
 
 History.prototype.play = function(gameHashCode) {
-	this.unratedGames.push({game : gameHashCode});
-	this.recordFn(this.name, gameHashCode, null);
+	var gHash = gameHashCode.toLowerCase();
+	this.unratedGames.push({game : gHash});
+	this.recordFn(this.name, gHash, null);
 }
 
 History.prototype.rate = function (gameHashCode, rating) {
+	var gHash = gameHashCode.toLowerCase();
 	if (rating === null) {
 		throw "Must provide rating";
 	}
@@ -77,8 +79,8 @@ History.prototype.rate = function (gameHashCode, rating) {
 		throw "Invalid rating: " + rating;
 	}
 
-	this.ratedGames.push({game : gameHashCode, rating : rating});
-	this.recordFn(this.name, gameHashCode, rating);
+	this.ratedGames.push({game : gHash, rating : rating});
+	this.recordFn(this.name, gHash, rating);
 };
 
 module.exports = History;
