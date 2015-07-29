@@ -16,7 +16,7 @@ var History = function (name, ratedGames, unratedGames, recordFn) {
 };
 
 History.prototype.predict = function (gameHash, callback) {
-	var me = this, gHash = gameHash.toLowerCase(0;
+	var me = this, gHash = gameHash.toLowerCase(0);
 	
 	// there's just not enough information to make a useful prediction
 	if (this.ratedGames.length < 5) {
