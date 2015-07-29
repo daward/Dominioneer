@@ -163,7 +163,7 @@ HistoryBuilder.prototype.loadHistory = function (name, callback) {
 		} else {
 			for (i = 0; i < data.Items.length; i++) {
 				if(data.Items[i].rating) {
-					rated.push({game : data.Items[i].gameId.S, rating: data.Items[i].rating.N});
+					rated.push({game : data.Items[i].gameId.S, rating: parseInt(data.Items[i].rating.N)});
 				} else {
 					unrated.push({game : data.Items[i].gameId.S});
 				}
